@@ -117,7 +117,8 @@ void td_ctrl (qk_tap_dance_state_t *state, void *user_data) {
 
 enum {
     SET_RGB = 0x01,
-    SET_MODE = 0x02
+    SET_MODE = 0x02,
+    SAVE_MODE = 0x03,
 };
 
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
@@ -133,6 +134,8 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
         case SET_MODE:
             rgblight_mode_noeeprom(cmd[1]);
             break;
+        case SAVE_MODE:
+            rgblight_mode(cmd[1]);
+            break;
     }
-    raw_hid_send(cmd, 16);
 }
