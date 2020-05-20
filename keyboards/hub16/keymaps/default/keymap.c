@@ -14,7 +14,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include QMK_KEYBOARD_H
-
+#include <string.h>
+#include "raw_hid.h"
 // Function key we are 'wrapping' usual key presses in
 #define KC_WRAP KC_F24
 
@@ -112,4 +113,26 @@ void td_ctrl (qk_tap_dance_state_t *state, void *user_data) {
   } else if (state->count == 2) {
     layer_move(_CTRL);
   }
+}
+
+enum {
+    SET_RGB = 0x01,
+    SET_MODE = 0x02
+};
+
+#define MIN(x, y) (((x) < (y)) ? (x) : (y))
+
+void raw_hid_receive(uint8_t *data, uint8_t length) {
+    uint8_t cmd[16];
+    memset(cmd, 0x00, 16);
+    memcpy(cmd, data, MIN(length, 16));
+    switch (cmd[0]) {
+        case SET_RGB:
+            rgblight_setrgb(cmd[1], cmd[2], cmd[3]);
+            break;
+        case SET_MODE:
+            rgblight_mode_noeeprom(cmd[1]);
+            break;
+    }
+    raw_hid_send(cmd, 16);
 }
