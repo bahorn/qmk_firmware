@@ -121,7 +121,8 @@ enum {
     SAVE_MODE = 0x03,
     LED_COUNT = 0x04,
     CUR_MODE = 0x05,
-    SET_LED = 0x06
+    SET_LED = 0x06,
+    RESET_KBD = 0x07
 };
 
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
@@ -150,6 +151,9 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
             break;
         case SET_LED:
             rgblight_setrgb_at(cmd[2], cmd[3], cmd[4], cmd[1]);
+            break;
+        case RESET_KBD:
+            reset_keyboard();
             break;
     }
     raw_hid_send(cmd, RAW_EPSIZE);
