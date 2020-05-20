@@ -119,14 +119,18 @@ enum {
     SET_RGB = 0x01,
     SET_MODE = 0x02,
     SAVE_MODE = 0x03,
+    LED_COUNT = 0x04,
+    CUR_MODE = 0x05,
+    SET_LED = 0x06
 };
 
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
+#define MAX_CMD_LEN RAW_EPSIZE
 
 void raw_hid_receive(uint8_t *data, uint8_t length) {
-    uint8_t cmd[16];
-    memset(cmd, 0x00, 16);
-    memcpy(cmd, data, MIN(length, 16));
+    uint8_t cmd[MAX_CMD_LEN];
+    memset(cmd, 0x00, MAX_CMD_LEN);
+    memcpy(cmd, data, MIN(length, MAX_CMD_LEN));
     switch (cmd[0]) {
         case SET_RGB:
             rgblight_setrgb(cmd[1], cmd[2], cmd[3]);
@@ -137,5 +141,16 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
         case SAVE_MODE:
             rgblight_mode(cmd[1]);
             break;
+        case LED_COUNT:
+            cmd[0x01] = RGBLED_NUM;
+            /* Send a reply containing the total number of LEDS */
+            break;
+        case CUR_MODE:
+            cmd[0x01] = rgblight_get_mode();
+            break;
+        case SET_LED:
+            rgblight_setrgb_at(cmd[2], cmd[3], cmd[4], cmd[1]);
+            break;
     }
+    raw_hid_send(cmd, RAW_EPSIZE);
 }
