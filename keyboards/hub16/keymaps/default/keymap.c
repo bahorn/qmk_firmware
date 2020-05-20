@@ -116,13 +116,13 @@ void td_ctrl (qk_tap_dance_state_t *state, void *user_data) {
 }
 
 enum {
-    SET_RGB = 0x01,
-    SET_MODE = 0x02,
-    SAVE_MODE = 0x03,
-    LED_COUNT = 0x04,
-    CUR_MODE = 0x05,
-    SET_LED = 0x06,
-    RESET_KBD = 0x07
+    RESET_KBD = 0x01,
+    LED_COUNT = 0x02,
+    CUR_MODE = 0x03,
+    SET_LED = 0x04,
+    SET_RGB = 0x05,
+    SET_MODE = 0x06,
+    SAVE_MODE = 0x07
 };
 
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
